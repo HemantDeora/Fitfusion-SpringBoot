@@ -6,10 +6,9 @@ import com.training.Service.RecommendationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -21,5 +20,17 @@ public class RecommendationController {
     @PostMapping("/generate")
     public ResponseEntity<RecommendationResponseDto> generateRecommendation(@Valid  @RequestBody RecommendationRequestDto recommendationRequestDto) {
         return ResponseEntity.ok(recommendationService.generateRecommendation(recommendationRequestDto));
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<RecommendationResponseDto>> getRecommendationByUserID(
+            @PathVariable("id") Long userId) {
+
+        return ResponseEntity.ok(recommendationService.getRecommendationByUserID(userId));
+    }
+
+    @GetMapping("/activity/{activityId}")
+    public ResponseEntity<List<RecommendationResponseDto>> getRecommendationByActivityID(@PathVariable Long activityId) {
+        return ResponseEntity.ok(recommendationService.getRecommendationByActivityID(activityId));
     }
 }

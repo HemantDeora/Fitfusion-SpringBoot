@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RecommendationServiceImpl implements RecommendationService {
@@ -46,5 +48,26 @@ public class RecommendationServiceImpl implements RecommendationService {
         Recommendation saved = recommendationRepo.save(recommendation);
 
         return modelMapper.map(saved, RecommendationResponseDto.class);
+    }
+
+    @Override
+    public List<RecommendationResponseDto> getRecommendationByUserID(Long userId) {
+
+      List<Recommendation> recommendations = recommendationRepo.findByUserId(userId);
+        return recommendations.stream()
+                .map(r -> modelMapper.map(r, RecommendationResponseDto.class))
+                .toList();
+    }
+
+    @Override
+    public List<RecommendationResponseDto> getRecommendationByActivityID(Long activityId) {
+
+        if (!activityRepo.existsById(activityId)) {
+            throw new RuntimeException("Activity not found");
+        }
+
+        return recommendationRepo.findByActivityId(activityId).stream()
+                .map(r -> modelMapper.map(r, RecommendationResponseDto.class))
+                .toList();
     }
 }
