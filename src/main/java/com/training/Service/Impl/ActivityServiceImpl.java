@@ -9,17 +9,16 @@ import com.training.Repo.UserRepo;
 import com.training.Service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ActivityServiceImpl implements ActivityService {
+
     private final ActivityRepo activityRepo;
     private final ModelMapper modelMapper;
     private final UserRepo userRepo;
-
 
     @Override
     public ActivityResponseDto createActivity(ActivityRequestDto dto) {
@@ -44,19 +43,34 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public List<ActivityResponseDto> getAllActivity() {
+    public Page<ActivityResponseDto> getAllActivity(int page, int size, String sortBy, String sortDir) {
 
-        List<Activity>  activity = activityRepo.findAll();
-        return activity.stream()
-                .map(a -> modelMapper.map(a, ActivityResponseDto.class))
-                .toList();
+        Sort sort = sortDir.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Activity> activityPage = activityRepo.findAll(pageable);
+
+        return activityPage.map(activity ->
+                modelMapper.map(activity, ActivityResponseDto.class)
+        );
     }
 
     @Override
-    public List<ActivityResponseDto> getActivitiesByUser(Long userId) {
+    public Page<ActivityResponseDto> getActivitiesByUser(Long userId, int page, int size, String sortBy, String sortDir) {
 
-        List<Activity> activities = activityRepo.findByUserId(userId);
+        Sort sort = sortDir.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
 
-        return activities.stream().map(activity -> modelMapper.map(activity, ActivityResponseDto.class)).toList();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Activity> activityPage = activityRepo.findByUserId(userId, pageable);
+
+        return activityPage.map(activity ->
+                modelMapper.map(activity, ActivityResponseDto.class)
+        );
     }
 }

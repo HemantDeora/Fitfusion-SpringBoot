@@ -1,17 +1,14 @@
 package com.training.Controller;
 
-
 import com.training.Dto.ActivityRequestDto;
 import com.training.Dto.ActivityResponseDto;
-import com.training.Entity.Activity;
 import com.training.Service.ActivityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -25,20 +22,33 @@ public class ActivityController {
             @Valid @RequestBody ActivityRequestDto dto) {
 
         ActivityResponseDto response = activityService.createActivity(dto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     @GetMapping("/activity")
-    public ResponseEntity<List<ActivityResponseDto>> getAllActivity(){
-        return ResponseEntity.ok(activityService.getAllActivity());
+    public ResponseEntity<Page<ActivityResponseDto>> getAllActivity(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        Page<ActivityResponseDto> response =
+                activityService.getAllActivity(page, size, sortBy, sortDir);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{userId}/activities")
-    public ResponseEntity<List<ActivityResponseDto>> getUserActivities(
-            @PathVariable Long userId) {
+    public ResponseEntity<Page<ActivityResponseDto>> getUserActivities(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        Page<ActivityResponseDto> response =
+                activityService.getActivitiesByUser(userId, page, size, sortBy, sortDir);
 
-        return ResponseEntity.ok(activityService.getActivitiesByUser(userId));
+        return ResponseEntity.ok(response);
     }
 }

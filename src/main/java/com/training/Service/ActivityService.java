@@ -2,13 +2,14 @@ package com.training.Service;
 
 import com.training.Dto.ActivityRequestDto;
 import com.training.Dto.ActivityResponseDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ActivityService {
     ActivityResponseDto createActivity(ActivityRequestDto activityRequestDto);
 
-    List<ActivityResponseDto> getAllActivity();
+    Page<ActivityResponseDto> getAllActivity(int page, int size, String sortBy, String sortDir);
 
-    List<ActivityResponseDto> getActivitiesByUser(Long userId);
+    Page<ActivityResponseDto> getActivitiesByUser(Long userId,int page, int size, String sortBy, String sortDir);
 }
