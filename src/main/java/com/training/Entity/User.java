@@ -1,6 +1,7 @@
 package com.training.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.training.Entity.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +33,9 @@ public class User {
 
     private String firstName;
     private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.USER;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
