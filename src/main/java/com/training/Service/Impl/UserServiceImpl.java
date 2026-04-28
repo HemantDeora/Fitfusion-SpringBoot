@@ -4,9 +4,13 @@ import com.training.Dto.UserRequestDto;
 import com.training.Dto.UserResponseDto;
 import com.training.Entity.User;
 import com.training.Repo.UserRepo;
+import com.training.Security.CustomUserDetails;
+import com.training.Security.CustomUserDetailsService;
 import com.training.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,13 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper modelMapper;
     private final UserRepo userRepo;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userRepo.findByEmail(email)
+        return new CustomUserDetails(user);
+    }
 
     @Override
     public UserResponseDto register(UserRequestDto userRequestDto) {
